@@ -1,0 +1,259 @@
+.page {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #e8eef2;
+}
+
+.chat {
+  display: flex;
+  width: min(100%, 1280px);
+  height: calc(100vh - 40px);
+  height: calc(100dvh - 40px);
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #dce5eb;
+  border-radius: 14px;
+  background: #e9f1ed;
+  box-shadow: 0 16px 48px rgb(35 64 82 / 10%);
+}
+
+.header {
+  display: flex;
+  min-height: 76px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 28px;
+  border-bottom: 1px solid #e9edf0;
+  background: #fff;
+}
+
+.avatar {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #56baf3, #178ad4);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.headerText {
+  min-width: 0;
+
+  h1 {
+    overflow: hidden;
+    margin: 0;
+    color: #17212b;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.connectButton {
+  flex: none;
+  margin-left: auto;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #e8f4fc;
+  color: #4d9dce;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: not-allowed;
+}
+
+.messageArea {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.messageContent {
+  display: flex;
+  width: min(100%, 800px);
+  min-height: 100%;
+  flex-direction: column;
+  margin: 0 auto;
+  padding: 22px 16px 28px;
+}
+
+.dateLabel {
+  align-self: center;
+  padding: 6px 11px;
+  border-radius: 12px;
+  background: rgb(82 111 121 / 42%);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.messageList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: auto 0 0;
+  padding: 36px 0 0;
+  list-style: none;
+}
+
+.message {
+  width: fit-content;
+  max-width: min(82%, 420px);
+  padding: 9px 11px 7px;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgb(45 72 77 / 12%);
+
+  p {
+    margin: 0;
+    color: #18242c;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  time {
+    display: block;
+    margin-top: 3px;
+    color: #8a9ba3;
+    font-size: 9px;
+    line-height: 1;
+    text-align: right;
+  }
+}
+
+.incoming {
+  align-self: flex-start;
+  border-bottom-left-radius: 5px;
+  background: #fff;
+}
+
+.outgoing {
+  align-self: flex-end;
+  border-bottom-right-radius: 5px;
+  background: #d9f4d2;
+
+  time {
+    color: #7a9c78;
+  }
+}
+
+.emptyState {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  text-align: center;
+
+  h2 {
+    margin: 16px 0 0;
+    color: #24343c;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+}
+
+.composer {
+  display: flex;
+  min-height: 70px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 28px;
+  border-top: 1px solid #e9edf0;
+  background: #fff;
+}
+
+.composerInner {
+  display: flex;
+  width: min(100%, 768px);
+  align-items: center;
+  gap: 10px;
+}
+
+.messageField {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid #e6edf1;
+  border-radius: 20px;
+  outline: none;
+  background: #f7f9fa;
+  color: #17212b;
+  font: inherit;
+  font-size: 14px;
+
+  &::placeholder {
+    color: #a0adb5;
+  }
+
+  &:focus-visible {
+    border-color: #64aee0;
+    box-shadow: 0 0 0 3px rgb(100 174 224 / 16%);
+  }
+}
+
+.sendButton {
+  display: grid;
+  height: 40px;
+  flex: none;
+  place-items: center;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 20px;
+  background: #9dcee9;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 0;
+  }
+
+  .chat {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .header {
+    padding-right: 18px;
+    padding-left: 18px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+  }
+
+  .connectButton {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .composer {
+    padding-right: 14px;
+    padding-left: 14px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+}
