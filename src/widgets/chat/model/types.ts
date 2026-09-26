@@ -7,6 +7,12 @@ export type ChatMessage = {
 
 export type ChatHeaderProps = {
   title: string;
+  onOpenSettings: () => void;
+};
+
+export type ChatProps = {
+  recipient: string;
+  onOpenSettings: () => void;
 };
 
 export type MessageListProps = {
