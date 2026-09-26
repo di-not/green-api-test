@@ -1,5 +1,7 @@
+import type { ConnectionData } from "@/features/connect-chat";
+
 export type ChatMessage = {
-  id: number;
+  id: string;
   direction: "incoming" | "outgoing";
   text: string;
   time: string;
@@ -11,8 +13,16 @@ export type ChatHeaderProps = {
 };
 
 export type ChatProps = {
-  recipient: string;
+  connection: ConnectionData;
   onOpenSettings: () => void;
+};
+
+export type MessageInputProps = {
+  value: string;
+  isSending: boolean;
+  error: string | null;
+  onChange: (value: string) => void;
+  onSend: () => void;
 };
 
 export type MessageListProps = {

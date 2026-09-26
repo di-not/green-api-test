@@ -20,7 +20,7 @@ export function HomePage() {
     setIsEditing(false);
   }
 
-  if (!connection || isEditing) {
+  if (!connection?.apiUrl || isEditing) {
     return (
       <ConnectChatForm
         initialValues={connection}
@@ -32,8 +32,8 @@ export function HomePage() {
 
   return (
     <Chat
+      connection={connection}
       onOpenSettings={() => setIsEditing(true)}
-      recipient={connection.phoneNumber}
     />
   );
 }

@@ -179,14 +179,15 @@
     font-size: 15px;
     font-weight: 600;
   }
-
 }
 
 .composer {
   display: flex;
   min-height: 70px;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   padding: 10px 28px;
   border-top: 1px solid #e9edf0;
   background: #fff;
@@ -230,12 +231,29 @@
   padding: 0 16px;
   border: 0;
   border-radius: 20px;
-  background: #9dcee9;
+  background: #248bd0;
   color: #fff;
   font: inherit;
   font-size: 12px;
   font-weight: 600;
-  cursor: not-allowed;
+  cursor: pointer;
+
+  &:disabled {
+    background: #9dcee9;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #64aee0;
+    outline-offset: 2px;
+  }
+}
+
+.composerError {
+  width: min(100%, 768px);
+  color: #b74d4d;
+  font-size: 11px;
+  line-height: 1.4;
 }
 
 @media (max-width: 640px) {

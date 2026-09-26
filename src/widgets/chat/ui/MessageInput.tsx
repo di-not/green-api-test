@@ -1,24 +1,42 @@
+import type { MessageInputProps } from "../model/types";
 import styles from "./Chat.module.scss";
 
-export function MessageInput() {
+export function MessageInput({
+  value,
+  isSending,
+  error,
+  onChange,
+  onSend,
+}: MessageInputProps) {
   return (
-    <div className={styles.composer}>
+    <form
+      className={styles.composer}
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSend();
+      }}
+    >
       <div className={styles.composerInner}>
         <input
           aria-label="Сообщение"
           className={styles.messageField}
+          disabled={isSending}
+          maxLength={4096}
+          onChange={(event) => onChange(event.target.value)}
           placeholder="Сообщение"
           type="text"
+          value={value}
         />
         <button
           aria-label="Отправить сообщение"
           className={styles.sendButton}
-          disabled
-          type="button"
+          disabled={isSending || !value.trim()}
+          type="submit"
         >
-          Отправить
+          {isSending ? "Отправка..." : "Отправить"}
         </button>
       </div>
-    </div>
+      {error && <span className={styles.composerError}>{error}</span>}
+    </form>
   );
 }

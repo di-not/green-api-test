@@ -1,5 +1,9 @@
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+
+import { IconEye } from "@/shared/icons/eye";
+import { IconEyeOff } from "@/shared/icons/eyeOff";
 
 import { formatPhone } from "../model/phone";
 import { connectionSchema } from "../model/schema";
@@ -10,6 +14,7 @@ import type {
 import styles from "./ConnectChatForm.module.scss";
 
 const emptyValues: ConnectionFormValues = {
+  apiUrl: "",
   idInstance: "",
   apiTokenInstance: "",
   phoneNumber: "",
@@ -20,6 +25,7 @@ export function ConnectChatForm({
   onConnect,
   onCancel,
 }: ConnectChatFormProps) {
+  const [isTokenVisible, setIsTokenVisible] = useState(false);
   const {
     register,
     control,
@@ -29,6 +35,7 @@ export function ConnectChatForm({
     defaultValues: initialValues
       ? {
           ...initialValues,
+          apiUrl: initialValues.apiUrl ?? "",
           phoneNumber: formatPhone(initialValues.phoneNumber),
         }
       : emptyValues,
@@ -49,6 +56,20 @@ export function ConnectChatForm({
           onSubmit={handleSubmit(onConnect)}
         >
           <div className={styles.field}>
+            <label htmlFor="api-url">API URL</label>
+            <input
+              autoComplete="url"
+              id="api-url"
+              placeholder="https://4100.api.green-api.com"
+              type="url"
+              {...register("apiUrl")}
+            />
+            {errors.apiUrl && (
+              <span className={styles.error}>{errors.apiUrl.message}</span>
+            )}
+          </div>
+
+          <div className={styles.field}>
             <label htmlFor="id-instance">ID инстанса</label>
             <input
               autoComplete="off"
@@ -62,12 +83,22 @@ export function ConnectChatForm({
 
           <div className={styles.field}>
             <label htmlFor="api-token-instance">Токен инстанса</label>
-            <input
-              autoComplete="off"
-              id="api-token-instance"
-              type="password"
-              {...register("apiTokenInstance")}
-            />
+            <div className={styles.tokenInput}>
+              <input
+                autoComplete="off"
+                id="api-token-instance"
+                type={isTokenVisible ? "text" : "password"}
+                {...register("apiTokenInstance")}
+              />
+              <button
+                aria-label={isTokenVisible ? "Скрыть токен" : "Показать токен"}
+                className={styles.toggleToken}
+                onClick={() => setIsTokenVisible((visible) => !visible)}
+                type="button"
+              >
+                {isTokenVisible ? <IconEyeOff /> : <IconEye />}
+              </button>
+            </div>
             {errors.apiTokenInstance && (
               <span className={styles.error}>
                 {errors.apiTokenInstance.message}
@@ -104,7 +135,7 @@ export function ConnectChatForm({
           <button className={styles.submitButton} type="submit">
             {initialValues ? "Сохранить" : "Создать чат"}
           </button>
-          {initialValues && (
+          {initialValues?.apiUrl && (
             <button
               className={styles.cancelButton}
               onClick={onCancel}
