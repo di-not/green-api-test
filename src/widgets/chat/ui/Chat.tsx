@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { sendMessage } from "@/shared/api/greenApi";
 
+import { addMessage } from "../model/message";
 import type { ChatMessage, ChatProps } from "../model/types";
 import { useIncomingMessages } from "../model/useIncomingMessages";
 import { ChatHeader } from "./ChatHeader";
@@ -38,6 +39,7 @@ export function Chat({ connection, onOpenSettings }: ChatProps) {
       return;
     }
 
+    const timestamp = Date.now();
     sending.current = true;
     setIsSending(true);
     setError(null);
@@ -57,18 +59,14 @@ export function Chat({ connection, onOpenSettings }: ChatProps) {
         return;
       }
 
-      setMessages((current) => [
-        ...current,
-        {
+      setMessages((current) =>
+        addMessage(current, {
           id: idMessage,
           direction: "outgoing",
           text: message,
-          time: new Date().toLocaleTimeString("ru-RU", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        },
-      ]);
+          timestamp,
+        }),
+      );
       setText("");
     } catch (cause) {
       if (mounted.current) {

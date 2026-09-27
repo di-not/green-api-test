@@ -10,6 +10,7 @@ import {
 } from "@/shared/api/greenApi";
 
 import { toIncomingMessage } from "./incomingMessage";
+import { addMessage } from "./message";
 import type { ChatMessage } from "./types";
 
 function shouldStopPolling(error: unknown) {
@@ -112,11 +113,7 @@ export function useIncomingMessages(
           const message = toIncomingMessage(notification, currentChatId);
 
           if (message) {
-            setMessages((current) =>
-              current.some((item) => item.id === message.id)
-                ? current
-                : [...current, message],
-            );
+            setMessages((current) => addMessage(current, message));
           }
 
           await deleteNotification(

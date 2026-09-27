@@ -24,23 +24,20 @@ export function toIncomingMessage(
     body.senderData?.chatId !== chatId ||
     body.messageData?.typeMessage !== "textMessage" ||
     typeof body.idMessage !== "string" ||
+    !body.idMessage ||
     typeof body.messageData.textMessageData?.textMessage !== "string"
   ) {
     return null;
   }
 
-  const date = typeof body.timestamp === "number"
-    ? new Date(body.timestamp * 1000)
-    : new Date();
-  const time = Number.isNaN(date.getTime()) ? new Date() : date;
+  const date = new Date(
+    typeof body.timestamp === "number" ? body.timestamp * 1000 : NaN,
+  );
 
   return {
     id: body.idMessage,
     direction: "incoming",
     text: body.messageData.textMessageData.textMessage,
-    time: time.toLocaleTimeString("ru-RU", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
+    timestamp: Number.isNaN(date.getTime()) ? Date.now() : date.getTime(),
   };
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 
+import { formatMessageTime } from "../model/message";
 import type { MessageListProps } from "../model/types";
 import { EmptyState } from "./EmptyState";
 import styles from "./Chat.module.scss";
@@ -19,7 +20,6 @@ export function MessageList({ messages }: MessageListProps) {
         <EmptyState />
       ) : (
         <div className={styles.messageContent}>
-          <div className={styles.dateLabel}>Сегодня</div>
           <ol className={styles.messageList}>
             {messages.map((message) => (
               <li
@@ -27,7 +27,7 @@ export function MessageList({ messages }: MessageListProps) {
                 key={message.id}
               >
                 <p>{message.text}</p>
-                <time>{message.time}</time>
+                <time>{formatMessageTime(message.timestamp)}</time>
               </li>
             ))}
           </ol>

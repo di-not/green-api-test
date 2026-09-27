@@ -4,7 +4,7 @@ export type ChatMessage = {
   id: string;
   direction: "incoming" | "outgoing";
   text: string;
-  time: string;
+  timestamp: number;
 };
 
 export type ChatHeaderProps = {
