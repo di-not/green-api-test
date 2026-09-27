@@ -15,7 +15,7 @@ export function MessageList({ messages }: MessageListProps) {
   }, [messages.length]);
 
   return (
-    <div className={styles.messageArea} aria-label="Сообщения" ref={areaRef}>
+    <div className={styles.messageArea} ref={areaRef}>
       {messages.length === 0 ? (
         <EmptyState />
       ) : (

@@ -4,6 +4,7 @@ import { sendMessage } from "@/shared/api/greenApi";
 
 import { addMessage } from "../model/message";
 import type { ChatMessage, ChatProps } from "../model/types";
+import { useChatConnection } from "../model/useChatConnection";
 import { useIncomingMessages } from "../model/useIncomingMessages";
 import { ChatHeader } from "./ChatHeader";
 import { MessageInput } from "./MessageInput";
@@ -19,10 +20,9 @@ export function Chat({ connection, onOpenSettings }: ChatProps) {
   const sending = useRef(false);
   const mounted = useRef(false);
 
-  const { getChatId, receiveError, startReceiving } = useIncomingMessages(
-    connection,
-    setMessages,
-  );
+  const { chatId, isConnecting, connectionError, retryConnection } =
+    useChatConnection(connection);
+  const receiveError = useIncomingMessages(connection, chatId, setMessages);
 
   useEffect(() => {
     mounted.current = true;
@@ -35,7 +35,7 @@ export function Chat({ connection, onOpenSettings }: ChatProps) {
   async function handleSend() {
     const message = text.trim();
 
-    if (!message || sending.current) {
+    if (!message || !chatId || sending.current) {
       return;
     }
 
@@ -45,15 +45,7 @@ export function Chat({ connection, onOpenSettings }: ChatProps) {
     setError(null);
 
     try {
-      const id = await getChatId();
-
-      if (!mounted.current) {
-        return;
-      }
-
-      startReceiving(id);
-
-      const idMessage = await sendMessage(connection, id, message);
+      const idMessage = await sendMessage(connection, chatId, message);
 
       if (!mounted.current) {
         return;
@@ -87,22 +79,35 @@ export function Chat({ connection, onOpenSettings }: ChatProps) {
 
   return (
     <main className={styles.page}>
-      <section className={styles.chat} aria-label="Telegram-чат">
+      <section className={styles.chat}>
         <ChatHeader
           onOpenSettings={onOpenSettings}
           title={connection.phoneNumber}
         />
-        <MessageList messages={messages} />
-        <MessageInput
-          error={error ?? receiveError}
-          isSending={isSending}
-          onChange={(value) => {
-            setText(value);
-            setError(null);
-          }}
-          onSend={handleSend}
-          value={text}
-        />
+        {isConnecting ? (
+          <div className={styles.connectionState}>Подключение к чату...</div>
+        ) : connectionError ? (
+          <div className={styles.connectionState}>
+            <p>{connectionError}</p>
+            <button onClick={retryConnection} type="button">
+              Повторить
+            </button>
+          </div>
+        ) : (
+          <>
+            <MessageList messages={messages} />
+            <MessageInput
+              error={error ?? receiveError}
+              isSending={isSending}
+              onChange={(value) => {
+                setText(value);
+                setError(null);
+              }}
+              onSend={handleSend}
+              value={text}
+            />
+          </>
+        )}
       </section>
     </main>
   );

@@ -8,11 +8,18 @@ export const connectionSchema = z.object({
     .trim()
     .url("Введите корректный API URL")
     .refine((value) => value.startsWith("https://"), "Укажите HTTPS-адрес API"),
-  idInstance: z.string().trim().min(1, "Введите ID инстанса"),
+  idInstance: z
+    .string()
+    .trim()
+    .min(1, "Введите ID инстанса")
+    .regex(/^\d+$/, "ID инстанса должен состоять из цифр"),
   apiTokenInstance: z.string().trim().min(1, "Введите токен инстанса"),
   phoneNumber: z
     .string()
     .min(1, "Введите номер телефона")
-    .refine((value) => Boolean(normalizePhone(value)), "Введите корректный номер телефона")
+    .refine(
+      (value) => Boolean(normalizePhone(value)),
+      "Введите корректный номер телефона",
+    )
     .transform(normalizePhone),
 });

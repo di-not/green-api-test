@@ -6,7 +6,7 @@ import styles from "./Chat.module.scss";
 export function ChatHeader({ title, onOpenSettings }: ChatHeaderProps) {
   return (
     <header className={styles.header}>
-      <div className={styles.avatar} aria-hidden="true">
+      <div className={styles.avatar}>
         <IconUser />
       </div>
       <div className={styles.headerText}>

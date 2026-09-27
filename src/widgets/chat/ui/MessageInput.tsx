@@ -18,7 +18,6 @@ export function MessageInput({
     >
       <div className={styles.composerInner}>
         <input
-          aria-label="Сообщение"
           className={styles.messageField}
           disabled={isSending}
           maxLength={4096}
@@ -28,7 +27,6 @@ export function MessageInput({
           value={value}
         />
         <button
-          aria-label="Отправить сообщение"
           className={styles.sendButton}
           disabled={isSending || !value.trim()}
           type="submit"

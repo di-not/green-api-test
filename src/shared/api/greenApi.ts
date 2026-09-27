@@ -124,6 +124,10 @@ function getErrorMessage(status: number, reason: string | null): string {
     error.includes("bad request data") ||
     error.includes("validation failed")
   ) {
+    if (error.includes("chatid")) {
+      return "Неверный идентификатор чата. Проверьте номер собеседника.";
+    }
+
     return "GREEN-API отклонил данные запроса. Проверьте настройки чата.";
   }
 
@@ -171,9 +175,12 @@ async function request<T>(
         ? "GREEN-API не ответил за 30 секунд."
         : "Не удалось связаться с GREEN-API. Проверьте API URL и сеть.";
 
-    throw new Error(endpoint === "sendMessage" ? `${message}` : message, {
-      cause,
-    });
+    throw new Error(
+      endpoint === "sendMessage"
+        ? `${message} Проверьте Telegram перед повторной отправкой.`
+        : message,
+      { cause },
+    );
   }
 
   let result: unknown;

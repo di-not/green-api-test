@@ -93,6 +93,43 @@
   overscroll-behavior: contain;
 }
 
+.connectionState {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  color: #344957;
+  text-align: center;
+
+  p {
+    max-width: 480px;
+    margin: 0;
+  }
+
+  button {
+    padding: 9px 18px;
+    border: 0;
+    border-radius: 10px;
+    background: #248bd0;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+
+    &:hover {
+      background: #167cbf;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #64aee0;
+      outline-offset: 2px;
+    }
+  }
+}
+
 .messageContent {
   display: flex;
   width: min(100%, 800px);

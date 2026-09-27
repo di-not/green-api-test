@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 
 import type { ConnectionData } from "@/features/connect-chat";
 import {
-  checkAccount,
   deleteNotification,
   GreenApiError,
   receiveNotification,
@@ -35,63 +34,17 @@ function shouldStopPolling(error: unknown) {
 
 export function useIncomingMessages(
   connection: ConnectionData,
+  chatId: string | null,
   setMessages: Dispatch<SetStateAction<ChatMessage[]>>,
 ) {
   const [receiveError, setReceiveError] = useState<string | null>(null);
-  const [activeChatId, setActiveChatId] = useState<string | null>(null);
-  const chatId = useRef<string | null>(null);
-  const chatIdRequest = useRef<Promise<string> | null>(null);
-
-  const getChatId = useCallback(() => {
-    if (chatId.current) {
-      return Promise.resolve(chatId.current);
-    }
-
-    if (!chatIdRequest.current) {
-      chatIdRequest.current = checkAccount(connection, connection.phoneNumber)
-        .then((id) => {
-          chatId.current = id;
-          return id;
-        })
-        .finally(() => {
-          chatIdRequest.current = null;
-        });
-    }
-
-    return chatIdRequest.current;
-  }, [connection]);
 
   useEffect(() => {
-    let active = true;
-
-    void getChatId()
-      .then((id) => {
-        if (active) {
-          setActiveChatId(id);
-          setReceiveError(null);
-        }
-      })
-      .catch((cause: unknown) => {
-        if (active) {
-          setReceiveError(
-            cause instanceof Error
-              ? cause.message
-              : "Не удалось подключиться к чату.",
-          );
-        }
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [getChatId]);
-
-  useEffect(() => {
-    if (!activeChatId) {
+    if (!chatId) {
       return;
     }
 
-    const currentChatId = activeChatId;
+    const currentChatId = chatId;
     const controller = new AbortController();
     let timer: number | undefined;
     let failures = 0;
@@ -151,18 +104,18 @@ export function useIncomingMessages(
 
       if (!controller.signal.aborted) {
         timer = window.setTimeout(() => {
-          void poll();
+          poll();
         }, delay);
       }
     }
 
-    void poll();
+    poll();
 
     return () => {
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [activeChatId, connection, setMessages]);
+  }, [chatId, connection, setMessages]);
 
-  return { getChatId, receiveError, startReceiving: setActiveChatId };
+  return receiveError;
 }
