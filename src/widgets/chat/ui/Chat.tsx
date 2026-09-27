@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { checkAccount, sendMessage } from "@/shared/api/greenApi";
+import { sendMessage } from "@/shared/api/greenApi";
 
 import type { ChatMessage, ChatProps } from "../model/types";
+import { useIncomingMessages } from "../model/useIncomingMessages";
 import { ChatHeader } from "./ChatHeader";
 import { MessageInput } from "./MessageInput";
 import { MessageList } from "./MessageList";
@@ -14,8 +15,21 @@ export function Chat({ connection, onOpenSettings }: ChatProps) {
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const chatId = useRef<string | null>(null);
   const sending = useRef(false);
+  const mounted = useRef(false);
+
+  const { getChatId, receiveError, startReceiving } = useIncomingMessages(
+    connection,
+    setMessages,
+  );
+
+  useEffect(() => {
+    mounted.current = true;
+
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
   async function handleSend() {
     const message = text.trim();
@@ -29,16 +43,24 @@ export function Chat({ connection, onOpenSettings }: ChatProps) {
     setError(null);
 
     try {
-      if (!chatId.current) {
-        chatId.current = await checkAccount(connection, connection.phoneNumber);
+      const id = await getChatId();
+
+      if (!mounted.current) {
+        return;
       }
 
-      const id = await sendMessage(connection, chatId.current, message);
+      startReceiving(id);
+
+      const idMessage = await sendMessage(connection, id, message);
+
+      if (!mounted.current) {
+        return;
+      }
 
       setMessages((current) => [
         ...current,
         {
-          id,
+          id: idMessage,
           direction: "outgoing",
           text: message,
           time: new Date().toLocaleTimeString("ru-RU", {
@@ -49,14 +71,19 @@ export function Chat({ connection, onOpenSettings }: ChatProps) {
       ]);
       setText("");
     } catch (cause) {
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : "Не удалось отправить сообщение.",
-      );
+      if (mounted.current) {
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : "Не удалось отправить сообщение.",
+        );
+      }
     } finally {
       sending.current = false;
-      setIsSending(false);
+
+      if (mounted.current) {
+        setIsSending(false);
+      }
     }
   }
 
@@ -69,7 +96,7 @@ export function Chat({ connection, onOpenSettings }: ChatProps) {
         />
         <MessageList messages={messages} />
         <MessageInput
-          error={error}
+          error={error ?? receiveError}
           isSending={isSending}
           onChange={(value) => {
             setText(value);
